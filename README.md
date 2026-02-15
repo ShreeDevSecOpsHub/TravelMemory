@@ -1,32 +1,13 @@
 # Travel Memory
 
-`.env` file to work with the backend after creating a database in mongodb: 
+# Part 1: Infrastructure Setup with Terraform
 
-```
-MONGO_URI='ENTER_YOUR_URL'
-PORT=3001
-```
+# 1. AWS Setup and Terraform Initialization: <br>
+ - Configure AWS CLI and authenticate with your AWS account. <br>
+     . Create new security credentials in the AWS console to perform the aws configure <br>
+ 
+ <img width="933" height="372" alt="image" src="https://github.com/user-attachments/assets/b21d1fc1-9859-4de9-9f40-c23bead6b6de" />
 
-Data format to be added: 
+  - Initialize a new Terraform project targeting AWS.
 
-```json
-{
-    "tripName": "Incredible India",
-    "startDateOfJourney": "19-03-2022",
-    "endDateOfJourney": "27-03-2022",
-    "nameOfHotels":"Hotel Namaste, Backpackers Club",
-    "placesVisited":"Delhi, Kolkata, Chennai, Mumbai",
-    "totalCost": 800000,
-    "tripType": "leisure",
-    "experience": "Lorem Ipsum, Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum,Lorem Ipsum, ",
-    "image": "https://t3.ftcdn.net/jpg/03/04/85/26/360_F_304852693_nSOn9KvUgafgvZ6wM0CNaULYUa7xXBkA.jpg",
-    "shortDescription":"India is a wonderful country with rich culture and good people.",
-    "featured": true
-}
-```
-
-
-For frontend, you need to create `.env` file and put the following content (remember to change it based on your requirements):
-```bash
-REACT_APP_BACKEND_URL=http://localhost:3001
-```
+   
