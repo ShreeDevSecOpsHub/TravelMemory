@@ -1,0 +1,10 @@
+aws_region            = "eu-west-2"
+environment           = "development"
+project_name          = "durga-TravelMemory"
+availability_zone     = "eu-west-2a"
+ami_id                = "ami-008f5d46f9a5d6898"
+instance_type         = "t3.medium"
+db_instance_type      = "t3.medium"
+backend_port          = 3001
+key_pair_name         = "durga-windows"
+allowed_ssh_cidr      = ["0.0.0.0/0"]
