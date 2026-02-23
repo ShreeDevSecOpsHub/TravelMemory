@@ -26,6 +26,7 @@
 - Created the key pair and attached it to the EC2 instances for SSH access. <br>
 # Terraform code is available in this path for the above requirements --> \Terraform\TravelMemory\infrastructure\ec2_instances.tf <br>
 
+<img width="1370" height="115" alt="image" src="https://github.com/user-attachments/assets/325c2585-21d6-4b07-90b8-227f8ffae66a" />
 
 
 # 4. Security Groups and IAM Roles:
@@ -46,5 +47,16 @@
 <img width="873" height="397" alt="image" src="https://github.com/user-attachments/assets/f6a5b846-e427-4f1c-865d-89a64be476a2" />
 
 # terraform apply tfplan
+
+<img width="967" height="358" alt="image" src="https://github.com/user-attachments/assets/7b26ec1d-db4b-43f1-8696-dee8f51d780c" />
+
+# Connected the EC2 instance with SSH (public instance only accessible from your IP). <br>
+
+# Web server (Output the public IP of the web server EC2 instance.)
+
+<img width="958" height="556" alt="image" src="https://github.com/user-attachments/assets/ac09e544-5c54-4c8a-bfd8-f58b78b943d7" />
+
+
+
 
 
