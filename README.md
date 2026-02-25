@@ -68,34 +68,34 @@
 
 
 
-TravelMemory/
-├── infrastructure/           # Terraform configuration
-│   ├── main.tf              # VPC, Subnets, Gateways
-│   ├── ec2_instances.tf     # EC2 instances
-│   ├── iam_and_security.tf  # IAM and Security Groups
-│   ├── variables.tf         # Variable definitions
-│   ├── terraform.tfvars     # Variable values
-│   └── outputs.tf           # Output values
+TravelMemory/ <br>
+├── infrastructure/           # Terraform configuration <br>
+│   ├── main.tf              # VPC, Subnets, Gateways <br>
+│   ├── ec2_instances.tf     # EC2 instances <br>
+│   ├── iam_and_security.tf  # IAM and Security Groups <br>
+│   ├── variables.tf         # Variable definitions <br>
+│   ├── terraform.tfvars     # Variable values <br>
+│   └── outputs.tf           # Output values <br>
 │
-├── ansible/                 # Ansible configuration
-│   ├── ansible.cfg          # Ansible configuration
-│   ├── inventory.ini        # Hosts and variables
-│   ├── playbooks/           # Playbook files
-│   │   ├── main.yml        # Orchestration
-│   │   ├── web-server.yml  # Web setup
-│   │   ├── db-server.yml   # Database setup
-│   │   ├── deploy.yml      # Application deployment
-│   │   └── security.yml    # Security hardening
-│   └── roles/              # Ansible roles
-│       ├── web-server/     # Node.js role
-│       ├── db-server/      # MongoDB role
-│       └── security/       # Security role
+├── ansible/                 # Ansible configuration <br>
+│   ├── ansible.cfg          # Ansible configuration <br>
+│   ├── inventory.ini        # Hosts and variables <br>
+│   ├── playbooks/           # Playbook files <br>
+│   │   ├── main.yml        # Orchestration <br>
+│   │   ├── web-server.yml  # Web setup <br>
+│   │   ├── db-server.yml   # Database setup <br>
+│   │   ├── deploy.yml      # Application deployment <br>
+│   │   └── security.yml    # Security hardening <br>
+│   └── roles/              # Ansible roles <br>
+│       ├── web-server/     # Node.js role <br>
+│       ├── db-server/      # MongoDB role <br>
+│       └── security/       # Security role <br>
 │
-├── backend/                 # Express.js backend
-├── frontend/               # React frontend
-├── azure-pipelines.yml     # CI/CD pipeline
+├── backend/                 # Express.js backend <br>
+├── frontend/               # React frontend <br>
+├── azure-pipelines.yml     # CI/CD pipeline <br>
 │
-└── README.md               # This file
+└── README.md               # This file <br>
 
 
 
