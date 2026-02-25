@@ -56,7 +56,46 @@
 
 <img width="958" height="556" alt="image" src="https://github.com/user-attachments/assets/ac09e544-5c54-4c8a-bfd8-f58b78b943d7" />
 
+# Part 2: Configuration and Deployment with Ansible
 
+- MongoDB installation and configuration <br>
+- Node.js and NPM setup <br>
+- MERN application deployment <br>
+- Environment configuration <br>
+- Security hardening (firewall, SSH, fail2ban, audit) <br>
+
+
+
+
+
+TravelMemory/
+├── infrastructure/           # Terraform configuration
+│   ├── main.tf              # VPC, Subnets, Gateways
+│   ├── ec2_instances.tf     # EC2 instances
+│   ├── iam_and_security.tf  # IAM and Security Groups
+│   ├── variables.tf         # Variable definitions
+│   ├── terraform.tfvars     # Variable values
+│   └── outputs.tf           # Output values
+│
+├── ansible/                 # Ansible configuration
+│   ├── ansible.cfg          # Ansible configuration
+│   ├── inventory.ini        # Hosts and variables
+│   ├── playbooks/           # Playbook files
+│   │   ├── main.yml        # Orchestration
+│   │   ├── web-server.yml  # Web setup
+│   │   ├── db-server.yml   # Database setup
+│   │   ├── deploy.yml      # Application deployment
+│   │   └── security.yml    # Security hardening
+│   └── roles/              # Ansible roles
+│       ├── web-server/     # Node.js role
+│       ├── db-server/      # MongoDB role
+│       └── security/       # Security role
+│
+├── backend/                 # Express.js backend
+├── frontend/               # React frontend
+├── azure-pipelines.yml     # CI/CD pipeline
+│
+└── README.md               # This file
 
 
 
