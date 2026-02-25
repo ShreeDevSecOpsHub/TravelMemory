@@ -1,0 +1,214 @@
+---
+# Security Hardening Role - Main tasks
+
+# Web Server Security
+- name: Configure firewall for web server
+  block:
+    - name: Start firewalld
+      systemd:
+        name: firewalld
+        enabled: yes
+        state: started
+      become: yes
+
+    - name: Allow SSH through firewall
+      firewalld:
+        service: ssh
+        permanent: yes
+        state: enabled
+        zone: public
+      become: yes
+      notify: reload firewall
+
+    - name: Allow HTTP through firewall
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+        zone: public
+      become: yes
+      notify: reload firewall
+
+    - name: Allow HTTPS through firewall
+      firewalld:
+        service: https
+        permanent: yes
+        state: enabled
+        zone: public
+      become: yes
+      notify: reload firewall
+
+    - name: Allow Node.js application port
+      firewalld:
+        port: "{{ app_port | default(3000) }}/tcp"
+        permanent: yes
+        state: enabled
+        zone: public
+      become: yes
+      notify: reload firewall
+  when: inventory_hostname in groups['webservers']
+
+# Database Server Security
+- name: Configure firewall for database server
+  block:
+    - name: Start firewalld
+      systemd:
+        name: firewalld
+        enabled: yes
+        state: started
+      become: yes
+
+    - name: Allow SSH from private subnet
+      firewalld:
+        service: ssh
+        permanent: yes
+        state: enabled
+        zone: internal
+      become: yes
+      notify: reload firewall
+
+    - name: Allow MongoDB port from private network
+      firewalld:
+        port: "{{ mongodb_port | default(27017) }}/tcp"
+        permanent: yes
+        state: enabled
+        zone: internal
+      become: yes
+      notify: reload firewall
+  when: inventory_hostname in groups['dbservers']
+
+# Common Security Hardening
+- name: Harden SSH configuration
+  block:
+    - name: Disable SSH password authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regex: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+        state: present
+      become: yes
+      notify: restart sshd
+
+    - name: Disable SSH root login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regex: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+        state: present
+      become: yes
+      notify: restart sshd
+
+    - name: Allow pubkey authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regex: '^#?PubkeyAuthentication'
+        line: 'PubkeyAuthentication yes'
+        state: present
+      become: yes
+      notify: restart sshd
+
+    - name: Set SSH port
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regex: '^#?Port'
+        line: 'Port 22'
+        state: present
+      become: yes
+      notify: restart sshd
+
+    - name: Disable empty password login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regex: '^#?PermitEmptyPasswords'
+        line: 'PermitEmptyPasswords no'
+        state: present
+      become: yes
+      notify: restart sshd
+
+    - name: Set MaxAuthTries
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regex: '^#?MaxAuthTries'
+        line: 'MaxAuthTries 3'
+        state: present
+      become: yes
+      notify: restart sshd
+
+- name: Configure system-level security
+  block:
+    - name: Enable automatic security updates
+      yum:
+        name: yum-cron
+        state: present
+      become: yes
+
+    - name: Enable yum-cron
+      systemd:
+        name: yum-cron
+        enabled: yes
+        state: started
+      become: yes
+
+    - name: Set SELinux to enforcing mode
+      selinux:
+        policy: targeted
+        state: enforcing
+      become: yes
+      register: selinux_result
+
+    - name: Reboot for SELinux changes
+      reboot:
+        msg: "Rebooting to apply SELinux changes"
+        post_reboot_delay: 10
+      become: yes
+      when: selinux_result.changed
+
+    - name: Configure fail2ban for intrusion detection
+      yum:
+        name:
+          - fail2ban
+          - fail2ban-systemd
+        state: present
+      become: yes
+
+    - name: Enable fail2ban
+      systemd:
+        name: fail2ban
+        enabled: yes
+        state: started
+      become: yes
+
+    - name: Configure fail2ban local jail
+      template:
+        src: jail.local.j2
+        dest: /etc/fail2ban/jail.local
+        owner: root
+        group: root
+        mode: '0644'
+      become: yes
+      notify: restart fail2ban
+
+- name: Configure audit logging
+  block:
+    - name: Install audit daemon
+      yum:
+        name: audit
+        state: present
+      become: yes
+
+    - name: Enable auditd
+      systemd:
+        name: auditd
+        enabled: yes
+        state: started
+      become: yes
+
+    - name: Configure audit rules
+      template:
+        src: audit.rules.j2
+        dest: /etc/audit/rules.d/audit.rules
+        owner: root
+        group: root
+        mode: '0640'
+      become: yes
+      notify: restart auditd

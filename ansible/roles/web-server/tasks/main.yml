@@ -1,0 +1,135 @@
+---
+# Web Server Role - Main tasks
+- name: Update system packages
+  yum:
+    name: '*'
+    state: latest
+  become: yes
+
+- name: Install required system packages
+  yum:
+    name:
+      - git
+      - curl
+      - wget
+      - nano
+      - htop
+      - net-tools
+      - gcc
+      - g++
+      - make
+      - python3
+      - python3-pip
+    state: present
+  become: yes
+
+- name: Create nodejs application user
+  user:
+    name: "{{ app_user }}"
+    shell: /bin/bash
+    home: "{{ app_home }}"
+    createhome: yes
+    state: present
+  become: yes
+
+- name: Create application directories
+  file:
+    path: "{{ app_home }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0755'
+  become: yes
+
+- name: Add NodeSource repository
+  shell: "curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -"
+  args:
+    warn: no
+  become: yes
+  register: nodejs_repo
+
+- name: Install Node.js and NPM
+  yum:
+    name:
+      - nodejs
+    state: present
+  become: yes
+  when: nodejs_repo.rc == 0
+
+- name: Verify Node.js installation
+  shell: node --version
+  register: node_version
+  changed_when: false
+
+- name: Display Node.js version
+  debug:
+    msg: "Node.js version: {{ node_version.stdout }}"
+
+- name: Verify NPM installation
+  shell: npm --version
+  register: npm_version
+  changed_when: false
+
+- name: Display NPM version
+  debug:
+    msg: "NPM version: {{ npm_version.stdout }}"
+
+- name: Clone MERN application repository
+  git:
+    repo: "{{ mern_app_repo }}"
+    dest: "{{ app_home }}/mern-app"
+    version: "{{ mern_app_branch }}"
+    clone: yes
+    update: yes
+  become: yes
+  become_user: "{{ app_user }}"
+  register: git_clone_result
+
+- name: Display git clone result
+  debug:
+    msg: "Repository cloned successfully"
+  when: git_clone_result.changed
+
+- name: Install backend dependencies
+  shell: cd "{{ app_home }}/mern-app/backend" && npm install
+  become: yes
+  become_user: "{{ app_user }}"
+  register: backend_install
+
+- name: Install frontend dependencies
+  shell: cd "{{ app_home }}/mern-app/frontend" && npm install
+  become: yes
+  become_user: "{{ app_user }}"
+  register: frontend_install
+
+- name: Create .env file for backend
+  template:
+    src: backend-env.j2
+    dest: "{{ app_home }}/mern-app/backend/.env"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0600'
+  notify: restart node application
+
+- name: Create .env file for frontend
+  template:
+    src: frontend-env.j2
+    dest: "{{ app_home }}/mern-app/frontend/.env"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0600'
+
+- name: Install PM2 globally
+  npm:
+    name: pm2
+    global: yes
+    state: present
+  become: yes
+
+- name: Create PM2 ecosystem configuration
+  template:
+    src: ecosystem.config.js.j2
+    dest: "{{ app_home }}/mern-app/ecosystem.config.js"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0644'

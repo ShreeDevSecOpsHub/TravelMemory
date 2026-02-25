@@ -1,0 +1,50 @@
+---
+# Security Hardening Playbook - Secure both web and database servers
+
+- name: Security Hardening
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  vars:
+    project_name: "durga-TravelMemory"
+    app_port: 3000
+    mongodb_port: 27017
+
+  pre_tasks:
+    - name: Display security hardening information
+      debug:
+        msg:
+          - "Security Hardening for TravelMemory Infrastructure"
+          - "Target: {{ inventory_hostname }}"
+          - "OS: {{ ansible_os_family }}"
+
+  roles:
+    - security
+
+  post_tasks:
+    - name: Verify SSH configuration
+      shell: sshd -T | grep -E "passwordauthentication|permiteemptypasswords|permitrootlogin"
+      register: ssh_config
+      changed_when: false
+      become: yes
+
+    - name: Check firewall status
+      shell: firewall-cmd --state
+      register: firewall_status
+      changed_when: false
+      ignore_errors: yes
+      become: yes
+
+    - name: Display security summary
+      debug:
+        msg:
+          - "Security Hardening Completed"
+          - "SSH: Hardened with key-based authentication only"
+          - "Firewall: {{ firewall_status.stdout | default('Not available') }}"
+          - "Fail2Ban: Installed and enabled for intrusion detection"
+          - "Audit: Configured for system monitoring"
+
+  tags:
+    - security
+    - hardening

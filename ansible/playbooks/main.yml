@@ -1,0 +1,43 @@
+---
+# Main Playbook - Orchestrates all configuration and deployment tasks
+
+- name: TravelMemory MERN Infrastructure Setup
+  hosts: all
+  gather_facts: yes
+
+  vars:
+    project_name: "durga-TravelMemory"
+    environment: "development"
+    region: "eu-west-2"
+
+  pre_tasks:
+    - name: Display deployment information
+      debug:
+        msg:
+          - "=========================================="
+          - "TravelMemory MERN Infrastructure Setup"
+          - "=========================================="
+          - "Project: {{ project_name }}"
+          - "Environment: {{ environment }}"
+          - "Region: {{ region }}"
+          - "Timestamp: {{ ansible_date_time.iso8601 }}"
+
+    - name: Check connectivity
+      ping:
+
+  tasks:
+    - name: Include database server setup
+      include_tasks: db-server.yml
+      when: inventory_hostname in groups['dbservers']
+
+    - name: Include web server setup
+      include_tasks: web-server.yml
+      when: inventory_hostname in groups['webservers']
+
+  post_tasks:
+    - name: Display final status
+      debug:
+        msg:
+          - "=========================================="
+          - "Setup Completed Successfully!"
+          - "=========================================="

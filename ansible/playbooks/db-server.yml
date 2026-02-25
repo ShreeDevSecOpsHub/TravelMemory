@@ -1,0 +1,61 @@
+---
+# Database Server Playbook - Install and configure MongoDB
+
+- name: Setup Database Server
+  hosts: dbservers
+  become: yes
+  gather_facts: yes
+
+  vars:
+    mongodb_version: 5.0
+    mongodb_port: 27017
+    mongodb_database: "travelmemory"
+    mongodb_user: "mongoadmin"
+    mongodb_admin_user: "admin"
+    mongodb_admin_password: "{{ mongodb_admin_password | default('admin123') }}"
+    mongodb_password: "{{ mongodb_password | default('changeme123') }}"
+
+  pre_tasks:
+    - name: Install required Python modules
+      pip:
+        name:
+          - pymongo>=3.10
+          - pexpect
+        state: present
+      become: yes
+
+    - name: Display database server setup information
+      debug:
+        msg:
+          - "Setting up Database Server for TravelMemory"
+          - "MongoDB Version: {{ mongodb_version }}"
+          - "MongoDB Port: {{ mongodb_port }}"
+          - "Database Name: {{ mongodb_database }}"
+          - "Admin User: {{ mongodb_admin_user }}"
+
+  roles:
+    - db-server
+
+  post_tasks:
+    - name: Verify MongoDB installation
+      shell: mongod --version | head -1
+      register: mongodb_check
+      changed_when: false
+      become: yes
+
+    - name: Check MongoDB service status
+      systemd:
+        name: mongod
+        enabled: yes
+      register: mongodb_status
+
+    - name: Display database setup summary
+      debug:
+        msg:
+          - "Database Server Setup Completed Successfully"
+          - "{{ mongodb_check.stdout }}"
+          - "MongoDB is running and enabled at startup"
+
+  tags:
+    - dbserver
+    - setup

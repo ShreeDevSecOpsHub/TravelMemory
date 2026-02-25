@@ -1,0 +1,45 @@
+module.exports = {
+  apps: [
+    {
+      name: 'travelmemory-backend',
+      script: './backend/index.js',
+      cwd: '/home/nodejs/applications/mern-app',
+      instances: 'max',
+      exec_mode: 'cluster',
+      env: {
+        NODE_ENV: 'development',
+        PORT: 3000,
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+      },
+      error_file: './logs/error.log',
+      out_file: './logs/out.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      max_restarts: 5,
+      min_uptime: '10s',
+      max_memory_restart: '500M',
+      merge_logs: true,
+    },
+    {
+      name: 'travelmemory-frontend',
+      script: 'npm',
+      args: 'start',
+      cwd: '/home/nodejs/applications/mern-app/frontend',
+      instances: 1,
+      exec_mode: 'fork',
+      env: {
+        NODE_ENV: 'development',
+        REACT_APP_API_URL: 'http://localhost:3000',
+        CHOKIDAR_USEPOLLING: 'true',
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        REACT_APP_API_URL: 'http://localhost:3000',
+      },
+      error_file: './logs/frontend-error.log',
+      out_file: './logs/frontend-out.log',
+    },
+  ],
+};

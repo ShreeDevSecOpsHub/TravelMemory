@@ -35,7 +35,7 @@ resource "aws_instance" "web_server" {
 
 # Elastic IP for Web Server
 resource "aws_eip" "web_server_eip" {
-  domain            = "vpc"
+  vpc               = true
   instance          = aws_instance.web_server.id
   network_interface = aws_instance.web_server.primary_network_interface_id
 

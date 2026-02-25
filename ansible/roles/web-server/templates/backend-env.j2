@@ -1,0 +1,6 @@
+# Backend Environment Variables
+NODE_ENV={{ environment }}
+PORT={{ app_port }}
+DB_URL=mongodb://{{ mongodb_user }}:{{ mongodb_password }}@{{ hostvars[groups['dbservers'][0]]['ansible_host'] }}:{{ mongodb_port }}/{{ mongodb_database }}
+CORS_ORIGIN=http://localhost:3000
+API_URL=http://localhost:{{ app_port }}

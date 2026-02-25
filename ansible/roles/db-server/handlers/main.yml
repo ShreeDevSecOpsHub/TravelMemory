@@ -1,0 +1,8 @@
+---
+# Database Server Role - Handlers
+
+- name: restart mongodb
+  systemd:
+    name: mongod
+    state: restarted
+  become: yes

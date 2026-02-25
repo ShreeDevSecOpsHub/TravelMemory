@@ -1,0 +1,10 @@
+---
+# Web Server Role - Handlers
+
+- name: restart node application
+  shell: >
+    cd {{ app_home }}/mern-app &&
+    pm2 restart all || pm2 start ecosystem.config.js
+  become: yes
+  become_user: "{{ app_user }}"
+  ignore_errors: yes

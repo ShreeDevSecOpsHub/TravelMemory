@@ -1,0 +1,146 @@
+---
+# Database Server Role - Main tasks
+
+- name: Update system packages
+  yum:
+    name: '*'
+    state: latest
+  become: yes
+
+- name: Install required system packages
+  yum:
+    name:
+      - curl
+      - wget
+      - nano
+      - htop
+      - net-tools
+      - gnupg
+      - python3
+      - python3-pip
+    state: present
+  become: yes
+
+- name: Import MongoDB GPG key
+  rpm_key:
+    key: https://www.mongodb.org/static/pgp/server-5.0.asc
+    state: present
+  become: yes
+
+- name: Add MongoDB repository
+  yum_repository:
+    name: mongodb-org-5.0
+    description: MongoDB Repository
+    baseurl: https://repo.mongodb.org/yum/amazon/2/mongodb-org/5.0/x86_64/
+    gpgcheck: yes
+    gpgkey: https://www.mongodb.org/static/pgp/server-5.0.asc
+    enabled: yes
+  become: yes
+
+- name: Install MongoDB
+  yum:
+    name:
+      - mongodb-org
+      - mongodb-org-server
+      - mongodb-org-shell
+      - mongodb-org-tools
+    state: present
+  become: yes
+
+- name: Create MongoDB data directory
+  file:
+    path: /var/lib/mongodb
+    state: directory
+    owner: mongod
+    group: mongod
+    mode: '0755'
+  become: yes
+
+- name: Create MongoDB log directory
+  file:
+    path: /var/log/mongodb
+    state: directory
+    owner: mongod
+    group: mongod
+    mode: '0755'
+  become: yes
+
+- name: Enable MongoDB to start on boot
+  systemd:
+    name: mongod
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Wait for MongoDB to be ready
+  wait_for:
+    port: "{{ mongodb_port | default(27017) }}"
+    delay: 5
+    timeout: 30
+  become: yes
+
+- name: Create MongoDB admin user
+  community.mongodb.mongodb_user:
+    name: "{{ mongodb_admin_user | default('admin') }}"
+    password: "{{ mongodb_admin_password }}"
+    database: admin
+    roles:
+      - dbOwner
+      - userAdminAnyDatabase
+    state: present
+    login_port: "{{ mongodb_port | default(27017) }}"
+  become: yes
+  become_user: mongod
+
+- name: Create MongoDB application user
+  community.mongodb.mongodb_user:
+    name: "{{ mongodb_user }}"
+    password: "{{ mongodb_password }}"
+    database: "{{ mongodb_database }}"
+    roles:
+      - readWrite
+      - dbAdmin
+    state: present
+    login_port: "{{ mongodb_port | default(27017) }}"
+    login_user: "{{ mongodb_admin_user | default('admin') }}"
+    login_password: "{{ mongodb_admin_password }}"
+  become: yes
+  become_user: mongod
+
+- name: Create application database
+  community.mongodb.mongodb_shell:
+    login_user: "{{ mongodb_admin_user | default('admin') }}"
+    login_password: "{{ mongodb_admin_password }}"
+    execute: "db.createCollection('experiences')"
+    database: "{{ mongodb_database }}"
+  become: yes
+  become_user: mongod
+  ignore_errors: yes
+
+- name: Configure MongoDB for remote access
+  template:
+    src: mongod.conf.j2
+    dest: /etc/mongod.conf
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+  notify: restart mongodb
+
+- name: Configure MongoDB authentication
+  lineinfile:
+    path: /etc/mongod.conf
+    regex: '^#\s*security:'
+    line: 'security:'
+    state: present
+  become: yes
+  notify: restart mongodb
+
+- name: Enable MongoDB authentication
+  lineinfile:
+    path: /etc/mongod.conf
+    insertafter: '^security:'
+    line: '  authorization: enabled'
+    state: present
+  become: yes
+  notify: restart mongodb

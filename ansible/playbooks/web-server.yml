@@ -1,0 +1,74 @@
+---
+# Web Server Playbook - Install and configure Node.js, clone MERN app
+
+- name: Setup Web Server
+  hosts: webservers
+  become: yes
+  gather_facts: yes
+
+  vars:
+    # These will be overridden by inventory or command line
+    nodejs_version: 18
+    npm_version: 9
+    app_port: 3000
+    mern_app_repo: "https://github.com/durganaresh83/TravelMemory.git"
+    mern_app_branch: "feature/terraform_ansible"
+    app_name: "travelmemory"
+    app_user: "nodejs"
+    app_home: "/home/nodejs/applications"
+    environment: "development"
+    mongodb_password: "{{ mongodb_password | default('changeme123') }}"
+
+  pre_tasks:
+    - name: Install required Python modules
+      pip:
+        name:
+          - pymongo
+          - python-dotenv
+        state: present
+      become: yes
+
+    - name: Display web server setup information
+      debug:
+        msg:
+          - "Setting up Web Server for TravelMemory MERN Application"
+          - "Node.js Version: {{ nodejs_version }}"
+          - "NPM Version: {{ npm_version }}"
+          - "Application Port: {{ app_port }}"
+          - "Repository: {{ mern_app_repo }}"
+          - "Branch: {{ mern_app_branch }}"
+
+  roles:
+    - web-server
+
+  post_tasks:
+    - name: Verify Node.js installation
+      shell: node --version
+      register: node_check
+      changed_when: false
+
+    - name: Verify NPM installation
+      shell: npm --version
+      register: npm_check
+      changed_when: false
+
+    - name: Display installation summary
+      debug:
+        msg:
+          - "Web Server Setup Completed Successfully"
+          - "{{ node_check.stdout }}"
+          - "{{ npm_check.stdout }}"
+
+    - name: Create logs directory
+      file:
+        path: "{{ app_home }}/mern-app/logs"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+      become: yes
+      become_user: "{{ app_user }}"
+
+  tags:
+    - webserver
+    - setup

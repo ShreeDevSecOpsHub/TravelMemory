@@ -1,0 +1,91 @@
+---
+# Application Deployment Playbook - Start the MERN application with PM2
+
+- name: Deploy MERN Application
+  hosts: webservers
+  gather_facts: yes
+
+  vars:
+    app_user: "nodejs"
+    app_home: "/home/nodejs/applications"
+    app_port: 3000
+    environment: "development"
+
+  tasks:
+    - name: Check if PM2 is installed
+      shell: npm list -g pm2
+      register: pm2_check
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Install PM2 if not present
+      npm:
+        name: pm2
+        global: yes
+        state: present
+      become: yes
+      when: pm2_check.rc != 0
+
+    - name: Delete existing PM2 processes
+      shell: pm2 delete all || true
+      become: yes
+      become_user: "{{ app_user }}"
+      changed_when: false
+
+    - name: Start MERN application with PM2
+      shell: |
+        cd {{ app_home }}/mern-app
+        pm2 start ecosystem.config.js
+      become: yes
+      become_user: "{{ app_user }}"
+      register: pm2_start
+
+    - name: Display PM2 status
+      shell: pm2 status
+      become: yes
+      become_user: "{{ app_user }}"
+      register: pm2_status
+      changed_when: false
+
+    - name: Save PM2 configuration
+      shell: pm2 save
+      become: yes
+      become_user: "{{ app_user }}"
+      changed_when: false
+
+    - name: Generate PM2 startup script
+      shell: pm2 startup systemd -u {{ app_user }} --hp /home/{{ app_user }} | grep -oP 'sudo systemctl.*' || echo "Already configured"
+      become: yes
+      become_user: "{{ app_user }}"
+      register: pm2_startup
+      changed_when: false
+
+    - name: Enable PM2 startup
+      shell: sudo systemctl enable pm2-{{ app_user }}
+      become: yes
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Display application status
+      debug:
+        msg:
+          - "{{ pm2_status.stdout }}"
+
+    - name: Wait for backend service to start
+      wait_for:
+        port: "{{ app_port }}"
+        delay: 5
+        timeout: 30
+      register: backend_ready
+
+    - name: Display deployment summary
+      debug:
+        msg:
+          - "MERN Application Deployment Completed"
+          - "Backend running on port {{ app_port }}"
+          - "Frontend accessible on port 3000 (React default)"
+          - "Monitor with: pm2 logs"
+
+  tags:
+    - deploy
+    - application

@@ -1,0 +1,40 @@
+# MongoDB configuration file
+# See documentation for more details on configuration options.
+
+# Where to write output.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+# Where and how to store data.
+storage:
+  dbPath: /var/lib/mongodb
+  journal:
+    enabled: true
+  directoryPerDB: true
+
+# How the process runs
+processManagement:
+  fork: true
+  pidFilePath: /var/run/mongodb/mongod.pid
+
+# Network and connection options
+net:
+  port: {{ mongodb_port | default(27017) }}
+  bindIp: 0.0.0.0
+  maxIncomingConnections: 65536
+
+# Security options
+security:
+  authorization: enabled
+  javascriptEnabled: false
+
+# Replication options (optional)
+#replication:
+#  replSetName: "rs0"
+
+# Operator Parcel Service (OPS) monitoring
+#operationProfiling:
+#  mode: slowOp
+#  slowOpThresholdMs: 100

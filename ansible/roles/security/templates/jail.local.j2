@@ -1,0 +1,34 @@
+[DEFAULT]
+# Ban time (in seconds)
+bantime = 3600
+
+# Find time window (in seconds)
+findtime = 600
+
+# Max retry attempts
+maxretry = 3
+
+# Destemail and sendername
+destemail = admin@{{ project_name }}.local
+sendername = Fail2Ban
+action = %(action_mwl)s
+
+[sshd]
+enabled = true
+port = ssh
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 3600
+findtime = 600
+
+[httpd-auth]
+enabled = true
+port = http,https
+logpath = /var/log/httpd/error_log
+maxretry = 5
+
+[recidive]
+enabled = true
+bantime = 86400
+findtime = 604800
+maxretry = 3

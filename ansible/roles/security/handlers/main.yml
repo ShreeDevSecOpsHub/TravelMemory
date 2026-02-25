@@ -1,0 +1,26 @@
+---
+# Security Role - Handlers
+
+- name: restart sshd
+  systemd:
+    name: sshd
+    state: restarted
+  become: yes
+
+- name: reload firewall
+  systemd:
+    name: firewalld
+    state: reloaded
+  become: yes
+
+- name: restart fail2ban
+  systemd:
+    name: fail2ban
+    state: restarted
+  become: yes
+
+- name: restart auditd
+  service:
+    name: auditd
+    state: restarted
+  become: yes
