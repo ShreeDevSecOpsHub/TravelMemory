@@ -64,38 +64,82 @@
 - Environment configuration <br>
 - Security hardening (firewall, SSH, fail2ban, audit) <br>
 
+# 1. Ansible Configuration
+. Created 2 ec2 instances through terraform <br>
+. Created the inventory.ini file with 2 IP's <br>
+. Both the IP's are reaching via SSH <br>
+
+# 2. Web Server Setup:
+All packages are installed, and the repositories were cloned <br>
+. Web Server (xx.xx.xx.138)
+├── ✅ System updated with development tools <br>
+├── ✅ Node.js v16.20.2 installed (via nvm) <br>
+├── ✅ NPM v8.19.4 operational <br>
+├── ✅ MERN repository cloned <br>
+├── ✅ Backend dependencies (express, mongoose, etc.) <br>
+└── ✅ Frontend dependencies (react, axios, etc.) <br>
+
+# 3. Database Server Setup:
+. System packages are installed <br>
+. MongoDB is installed, and the container is active and accessible <br>
+
+# Database configuration
+Database Server: xx.xx.xxx.213:27017 <br>
+Status: ✅ Running (Docker container) <br>
+MongoDB Version: 4.4.30 <br>
+
+# Application Account: 
+Username: mongoadmin <br>
+Password: changeme123 <br>
+Database: travelmemory <br>
+Roles: readWrite, dbAdmin <br>
+
+# Connection String:
+mongodb://mongoadmin:changeme123@xx.xxx.xxx.213:27017/travelmemory
+
+# 4. Application Deployment:
+. Backend and Frontend .env configuration files were created <br>
+. Backend server started, and Frontend can communicate with the backend <br>
+
+# Current Deployment Status:
+Frontend Build: /home/ec2-user/travel-app/frontend/build/ <br>
+Backend Config: /home/ec2-user/travel-app/backend/.env <br>
+Database: Running at xx.xxx.xx.213:27017 <br>
+
+Component	Port	Status	URL
+Frontend (React)	3000	✅ RUNNING	http://xx.xx.xx.138:3000 <br>
+Backend (Express)	5000	✅ RUNNING	http://xx.xx.xx.138:5000 <br>
+Database (MongoDB)	27017	✅ RUNNING	xx.xx.xxx.213:27017 <br>
+
+Able to deploy the travel memory application through Ansible
+
+<img width="1511" height="962" alt="image" src="https://github.com/user-attachments/assets/60d49391-6adf-42cf-82c4-b6c0b80ebe46" />
+
+Able to enter the trip details
+
+<img width="1693" height="837" alt="image" src="https://github.com/user-attachments/assets/01c75acc-e2b8-4c86-a9e2-3f77fe2b3519" />
 
 
+# 5. Security Hardening:
 
+I've completed comprehensive security hardening for your TravelMemory MERN application. Here's what was delivered: <br>
 
-TravelMemory/ <br>
-├── infrastructure/           # Terraform configuration <br>
-│   ├── main.tf              # VPC, Subnets, Gateways <br>
-│   ├── ec2_instances.tf     # EC2 instances <br>
-│   ├── iam_and_security.tf  # IAM and Security Groups <br>
-│   ├── variables.tf         # Variable definitions <br>
-│   ├── terraform.tfvars     # Variable values <br>
-│   └── outputs.tf           # Output values <br>
-│
-├── ansible/                 # Ansible configuration <br>
-│   ├── ansible.cfg          # Ansible configuration <br>
-│   ├── inventory.ini        # Hosts and variables <br>
-│   ├── playbooks/           # Playbook files <br>
-│   │   ├── main.yml        # Orchestration <br>
-│   │   ├── web-server.yml  # Web setup <br>
-│   │   ├── db-server.yml   # Database setup <br>
-│   │   ├── deploy.yml      # Application deployment <br>
-│   │   └── security.yml    # Security hardening <br>
-│   └── roles/              # Ansible roles <br>
-│       ├── web-server/     # Node.js role <br>
-│       ├── db-server/      # MongoDB role <br>
-│       └── security/       # Security role <br>
-│
-├── backend/                 # Express.js backend <br>
-├── frontend/               # React frontend <br>
-├── azure-pipelines.yml     # CI/CD pipeline <br>
-│
-└── README.md               # This file <br>
+  # 1. Infrastructure as Code (Terraform)
+  [security_hardening.tf]  --> TravelMemory\infrastructure\security_hardening.tf) (400+ lines) <br>
 
+  # 2. Server Hardening Scripts
+  [security_hardening_web.sh] --> (TravelMemory\infrastructure\security_hardening_web.sh) (500+ lines) <br>
 
+SSH hardening (root login disabled, key-based auth only) <br>
+Firewall configuration (firewalld) <br>
+Fail2ban intrusion detection (3 strikes, 1-hour ban) <br>
+AIDE file integrity monitoring <br>
+SELinux hardening <br>
+
+. [security_hardening_db.sh]  --> (TravelMemory\infrastructure\security_hardening_db.sh) (400+ lines) <br>
+
+MongoDB-specific security <br>
+SSH hardening (same as web) <br>
+Database authentication enforcement <br>
+Network isolation <br>
 
