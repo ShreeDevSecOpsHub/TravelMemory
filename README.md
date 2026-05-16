@@ -1,8 +1,3 @@
-Your `README.md` file has been generated successfully and is available below. You can copy this content directly into a file named `README.md` in your project repository root.
-
-[file-tag: code-generated-file-0-1778958031749235482]
-
-```markdown
 # 🌍 TravelMemory Application - Cloud Deployment Guide
 
 A comprehensive, production-ready guide detailing the step-by-step deployment and scaling of the MERN-stack **TravelMemory** application on AWS EC2, configured with a highly resilient architectural flow using Nginx, AWS Application Load Balancers, and Cloudflare DNS management.
