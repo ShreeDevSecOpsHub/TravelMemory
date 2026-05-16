@@ -45,7 +45,7 @@ To ensure high availability, security, and low latency, the system is deployed u
 ### Step 1: System Provisioning & Node Runtime Installation
 SSH into your primary AWS EC2 Ubuntu instance and run system updates along with dependencies initialization:
 
-```
+``` bash
 # Update and upgrade local package indexes
 sudo apt update && sudo apt upgrade -y
 
