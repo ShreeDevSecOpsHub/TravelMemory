@@ -10,8 +10,6 @@ To ensure high availability, security, and low latency, the system is deployed u
 
 
 ```
-
-```
            [ User Browser ]
                   │
                   ▼
