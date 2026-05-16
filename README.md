@@ -61,7 +61,7 @@ sudo apt install -y nodejs nginx git
 
 ```bash
 # Clone the remote TravelMemory codebase
-git clone [https://github.com/UnpredictablePrashant/TravelMemory.git](https://github.com/UnpredictablePrashant/TravelMemory.git)
+git clone https://github.com/UnpredictablePrashant/TravelMemory.git
 
 # Move into the server runtime directory
 cd TravelMemory/backend
@@ -84,7 +84,7 @@ Inject the following settings into the `.env` file (adjusting the `MONGO_URI` to
 
 ```env
 PORT=3000
-MONGO_URI=mongodb+srv://cloud_admin:SecurePass123@cluster0.mongodb.net/travelmemory?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://shriramparab4_db_user:<db_password>@shriram-mango-cluster.dailjla.mongodb.net
 
 ```
 
@@ -159,7 +159,7 @@ Adjust the export target to route away from your development `localhost` setup:
 
 ```javascript
 // export const BACKEND_URL = "http://localhost:3000"; 
-export const BACKEND_URL = "[http://backend.yourcustomdomain.com](http://backend.yourcustomdomain.com)"; 
+export const BACKEND_URL = "http://backend.yourcustomdomain.com"; 
 
 ```
 
@@ -190,7 +190,7 @@ Apply the following explicit serving rules:
 ```nginx
 server {
     listen 80;
-    server_name yourcustomdomain.com [www.yourcustomdomain.com](https://www.yourcustomdomain.com);
+    server_name yourcustomdomain.com;
 
     root /home/ubuntu/TravelMemory/frontend/build;
     index index.html;
