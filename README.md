@@ -45,12 +45,12 @@ To ensure high availability, security, and low latency, the system is deployed u
 ### Step 1: System Provisioning & Node Runtime Installation
 SSH into your primary AWS EC2 Ubuntu instance and run system updates along with dependencies initialization:
 
-```bash
+```
 # Update and upgrade local package indexes
 sudo apt update && sudo apt upgrade -y
 
 # Download and run NodeSource setup script for Node.js v18
-curl -fsSL [https://deb.nodesource.com/setup_18.x](https://deb.nodesource.com/setup_18.x) | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 
 # Install core runtime stacks
 sudo apt install -y nodejs nginx git
